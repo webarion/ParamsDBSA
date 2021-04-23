@@ -1,7 +1,9 @@
 #include-once
 
+#include <dev.au3>
+
 ;     _____                                               _____    ____     _____
-;    |  __ \   Version 1.0.0                             |  __ \  |  _ \   / ____|     /\  ©Webarion
+;    |  __ \   Version 1.1.0                             |  __ \  |  _ \   / ____|     /\  ©Webarion
 ;    | |__) |   __ _   _ __    __ _   _ __ ___    ___    | |  | | | |_) | | (___      /  \
 ;    |  ___/   / _` | | '__|  / _` | | '_ ` _ \  / __|   | |  | | |  _ <   \___ \    / /\ \
 ;    | |      | (_| | | |    | (_| | | | | | | | \__ \   | |__| | | |_) |  ____) |  / ____ \
@@ -11,34 +13,38 @@
 
 ; # ABOUT THE LIBRARY # =========================================================================================================
 ; Name .............: ParamsDBSA
-; Current version ..: 1.0.0
+; Current version ..: 1.1.0
 ; AutoIt Version ...: 3.3.14.5
 ; Description ......: Provides writing / reading of variables by associative keys
 ;                   : Serves for faster search of values by keys and subkeys
 ; Author ...........: Webarion
 ; Links: ...........: http://webarion.ru, http://f91974ik.bget.ru
-; Link library .....: https://github.com/webarion/ParamsDBSA
+; Link library .....: https://github.com/Webarion/ParamsDBSA
 ; ===============================================================================================================================
 
 #CS Version history:
 	v1.0.0
-	First published version
+		First published version
+	v1.1.0
+		Fixed a bug with parameter recording
 #CE History
 
 ; # О БИБЛИОТЕКЕ # ==============================================================================================================
 ; Название .........: ParamsDBSA
-; Текущая версия ...: 1.0.0
+; Текущая версия ...: 1.1.0
 ; AutoIt Версия ....: 3.3.14.5
 ; Описание .........: Обеспечивает запись/чтение переменных по ассоциативным ключам
 ;                   : Служит для более быстрого поиска значений по ключам и подключам
 ; Автор ............: Webarion
 ; Ссылки: ..........: http://webarion.ru, http://f91974ik.bget.ru
-; Ссылка библиотеки : https://github.com/webarion/ParamsDBSA
+; Ссылка библиотеки : https://github.com/Webarion/ParamsDBSA
 ; ===============================================================================================================================
 
 #CS История версий:
 	v1.0.0
-	Первая опубликованная версия
+		Первая опубликованная версия
+	v1.1.0
+		Исправлен баг записи параметра
 #CE History
 
 #CS Data Storage Format. Формат хранения данных ===================================================================================
@@ -49,14 +55,14 @@
 #Region User methods. Пользовательские методы
 
 #CS User methods
-	- `_SET_Param_DBSA` - writing to the database
-	- `_GET_Param_DBSA` - reading from the database
-	- `_GET_Keys_DBSA` - getting all keys
-	- `_GET_SubKeys_DBSA` - getting all the keys
-	- `_FIND_ParamByKeys_DBSA` - strict or non-strict search for keys or parameters
-	- `_DEL_Key_DBSA` - deletes the key with all subkeys and their variables
-	- `_DEL_SubKey_DBSA` - deletes a subkey and its variable
-	- `_CLEAR_DBSA` - clears the entire database
+	_SET_Param_DBSA 				- writing to the database
+	_GET_Param_DBSA 				- reading from the database
+	_GET_Keys_DBSA 					- getting all keys
+	_GET_SubKeys_DBSA 			- getting all the keys
+	_FIND_ParamByKeys_DBSA 	- strict or non-strict search for keys or parameters
+	_DEL_Key_DBSA						- deletes the key with all subkeys and their variables
+	_DEL_SubKey_DBSA 				- deletes a subkey and its variable
+	_CLEAR_DBSA							- clears the entire database
 #CE
 
 #CS Пользовательские методы
@@ -72,6 +78,7 @@
 
 
 Global $agDataBase_DBSA[1]
+
 
 
 ;~ ; Example. Примеры
@@ -98,7 +105,9 @@ Global $agDataBase_DBSA[1]
 ;~ EndIf
 ;~ ;
 
+
 ; #USER FUNCTION# ===============================================================================================================
+; Description ..: Writes a parameter to the database
 ; Parameters ...: $sKey           - Key
 ;                 $sSubKey        - SubKey
 ;                 $vData          - Data to write
@@ -107,6 +116,7 @@ Global $agDataBase_DBSA[1]
 ;                                     If 0, then "Key" and "key" are added as one key, the newer one overwrites the old one
 ; ===============================================================================================================================
 ; #ПОЛЬЗОВАТЕЛЬСКАЯ ФУНКЦИЯ# ====================================================================================================
+; Описание ....: Записывает параметр в базу данных
 ; Параметры ...: $sKey           - Ключ
 ;                $sSubKey        - Подключ
 ;                $vData          - Записываемые данные
@@ -121,27 +131,28 @@ Func _SET_Param_DBSA($sKey, $sSubKey = '', $vData = '', $iCaseSensitive = 0)
 	Local $sMapLine = __GET_MapLine_DBSA($sKey, $iCaseSensitive)
 	If Not $sMapLine Then
 		$agDataBase_DBSA[0] &= $agDataBase_DBSA[0] ? @CRLF & $sKey : $sKey
+		$sMapLine = $sKey
 	EndIf
 	$aIndex = StringRegExp($sMapLine, ';' & $sSubKey & '=(\d+)', 1)
 	$iIndex = UBound($aIndex) ? Number($aIndex[0]) : 0
 	If Not $iIndex Then
 		ReDim $agDataBase_DBSA[UBound($agDataBase_DBSA) + 1]
 		$iIndex = UBound($agDataBase_DBSA) - 1
-		$agDataBase_DBSA[0] &= ';' & $sSubKey & '=' & UBound($agDataBase_DBSA) - 1
+		$agDataBase_DBSA[0] = StringRegExpReplace($agDataBase_DBSA[0], '(?mi)^(' & $sKey & '.*)$', '$1;' & $sSubKey & '=' & UBound($agDataBase_DBSA) - 1)
 	EndIf
 	$agDataBase_DBSA[$iIndex] = $vData
 	Return 1
 EndFunc   ;==>_SET_Param_DBSA
 
 ; #USER FUNCTION# ===============================================================================================================
+; Description ..: Reads a parameter from the database
 ; Parameters ...: $sKey          - Key
 ;                 $sSubKey       - SubKey
 ;                $iCaseSensitive - 1/0 (case sensitive/not case sensitive) when reading data. Default is 0
-; Return ......: None
-; Remarks .....:
-;              :
+; Return ......: Previously recorded data corresponding to the key and subkey
 ; ===============================================================================================================================
 ; #ПОЛЬЗОВАТЕЛЬСКАЯ ФУНКЦИЯ# ====================================================================================================
+; Описание ....: Читает параметр из базы данных
 ; Параметры ...: $sKey           - Ключ
 ;                $sSubKey        - Подключ
 ;                $iCaseSensitive - 1/0 (Учитывать/не учитывать) регистр ключей и подключей при чтении. По умолчанию 0
@@ -183,7 +194,7 @@ Func _GET_SubKeys_DBSA($sKey, $iCaseSensitive = 0)
 EndFunc   ;==>_GET_SubKeys_DBSA
 
 ; #USER FUNCTION# ===============================================================================================================
-; Description .:
+; Description .: Search by key and specified parameters
 ; Parameters ..: $sKey           - Key
 ;                $sSubKey        - Search string in the subkey
 ;                $iLocateFind    - Search method. By default, 0
@@ -197,7 +208,7 @@ EndFunc   ;==>_GET_SubKeys_DBSA
 ;                $iCaseSensitive - 1/0 (case sensitive/not case sensitive) key and subkey
 ; ===============================================================================================================================
 ; #ПОЛЬЗОВАТЕЛЬСКАЯ ФУНКЦИЯ# ====================================================================================================
-; Описание ....:
+; Описание ....: Поиск по ключу и указанным параметрам
 ; Параметры ...: $sKey           - Ключ
 ;                $sSubKey        - Искомая строка в подключе
 ;                $iLocateFind    - способ поиска. По умолчанию 0
@@ -292,6 +303,7 @@ Func _DEL_SubKey_DBSA($sKey, $sSubKey = '', $iCaseSensitive = 0)
 	Return 1
 EndFunc   ;==>_DEL_SubKey_DBSA
 
+; Очищает всю базу
 ; #USER FUNCTION# ===============================================================================================================
 ; Description .: Cleans the entire base
 ; ===============================================================================================================================
@@ -306,7 +318,7 @@ EndFunc   ;==>_CLEAR_DBSA
 #Region Системные методы. System methods
 ; Returns a keymap string with subkeys. Возвращает строку карты ключа с подключами
 Func __GET_MapLine_DBSA($sKey, $iCaseSensitive = 0)
-	Local $aMapLine = StringRegExp($agDataBase_DBSA[0], '(?m' & ($iCaseSensitive ? '' : 'i') & ')^' & String($sKey) & '(?:;.*|$)', 1)
+	Local $aMapLine = StringRegExp($agDataBase_DBSA[0], '(?m' & ($iCaseSensitive ? '' : 'i') & ')^' & String($sKey) & '.*$', 1)
 	If Not UBound($aMapLine) Then Return SetError(1, 0, '')
 	Return $aMapLine[0]
 EndFunc   ;==>__GET_MapLine_DBSA
@@ -323,9 +335,3 @@ EndFunc   ;==>__GET_MapLine_DBSA
 ;~ EndFunc   ;==>__Keys_Splitter
 
 #EndRegion Системные методы. System methods
-
-
-
-
-
-
