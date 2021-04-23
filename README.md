@@ -9,8 +9,8 @@ Note: English translation by Google Translate
 - **Links:** [Site](http://webarion.ru "Site"), [Mirror](http://f91974ik.bget.ru "Mirror")
 
 ### Version history: ###
-  v1.0.0 - First published version
-  v1.1.0 - Fixed a bug with parameter recording
+- v1.0.0 - First published version
+- v1.1.0 - Fixed a bug with parameter recording
 
 ### Data Storage Format ###
 	$agDataBase_DBSA[0] = Variables map
@@ -36,8 +36,8 @@ Note: English translation by Google Translate
  - **Ссылки:** [Основной сайт](http://webarion.ru "Основной сайт"), [Зеркало](http://f91974ik.bget.ru "Зеркало")
  
 ### История версий: ###
-  v1.0.0 - Первая опубликованная версия
-  v1.1.0 - Исправлен баг записи параметра
+- v1.0.0 - Первая опубликованная версия
+- v1.1.0 - Исправлен баг записи параметра
 		
 ### Формат хранения данных ###
 	$agDataBase_DBSA[0] = Карта переменных
