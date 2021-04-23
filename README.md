@@ -3,13 +3,14 @@ Note: English translation by Google Translate
 
 ## ABOUT THE LIBRARY ##
 - **Description:** Provides writing / reading of variables by associative keys. Serves for faster search of values by keys and subkeys
-- **Current version:** 1.0.0
+- **Current version:** 1.1.0
 - **AutoIt Version:** 3.3.14.5
 - **Author:** Webarion
 - **Links:** [Site](http://webarion.ru "Site"), [Mirror](http://f91974ik.bget.ru "Mirror")
 
 ### Version history: ###
 v1.0.0 - First published version
+v1.1.0 - Fixed a bug with parameter recording
 
 ### Data Storage Format ###
 	$agDataBase_DBSA[0] = Variables map
@@ -29,14 +30,15 @@ v1.0.0 - First published version
 
 ## О БИБЛИОТЕКЕ ##
  - **Описание:** Обеспечивает запись/чтение переменных по ассоциативным ключам. Служит для более быстрого поиска значений по ключам и подключам.
- - **Текущая версия:** 1.0.0
+ - **Текущая версия:** 1.1.0
  - **AutoIt Версия:** 3.3.14.5
  - **Автор:** Webarion
  - **Ссылки:** [Основной сайт](http://webarion.ru "Основной сайт"), [Зеркало](http://f91974ik.bget.ru "Зеркало")
  
 ### История версий: ###
 v1.0.0 - Первая опубликованная версия
-
+v1.1.0 - Исправлен баг записи параметра
+		
 ### Формат хранения данных ###
 	$agDataBase_DBSA[0] = Карта переменных
 	$agDataBase_DBSA[n] = Переменные
